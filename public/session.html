@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Check List</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22></svg>">
+<link rel="icon" href="/icon.png">
+<style>
+body{
+  margin:0;
+  font-family:Prompt;
+  background:#0f172a;
+  color:white;
+}
+
+.header{
+  padding:15px;
+  background:#1e293b;
+  text-align:center;
+  font-weight:bold;
+}
+
+#reader{
+  width:100%;
+  max-width:420px;
+  margin:10px auto;
+  aspect-ratio:1/1;
+  border-radius:12px;
+  overflow:hidden;
+  border:2px solid #22c55e;
+}
+
+#info{
+  text-align:center;
+  padding:10px;
+  color:#94a3b8;
+  font-size:14px;
+}
+
+.list{
+  padding:10px;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1e293b;
+  margin:8px 10px;
+  padding:10px;
+  border-radius:10px;
+}
+
+button{
+  width:90%;
+  margin:10px auto;
+  display:block;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">🚑 Emergency Check List 🚑</div>
+
+
+<div id="info">Loading...</div>
+
+<div id="reader"></div>
+
+<div id="list" class="list"></div>
+
+<button onclick="closeSession()">🧮 Close Session</button>
+
+<script src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+body {
+  font-family: 'Kanit', sans-serif;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+}
+
+#reader {
+  width: 60%;
+  max-width: 120px;
+  aspect-ratio: 1 / 1;
+
+  margin: 5px auto;
+  border-radius: 6px;
+
+  box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+  border: 2px solid #22c55e;
+}
+
+#info {
+  margin: 2px;
+  padding: 2px;
+  background: #1e293b;
+}
+
+.list {
+  margin-top: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  background: #1f2937;
+  padding: 12px;
+  border-radius: 14px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+.item-left {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.code {
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.name {
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.qty-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+
+  background: #334155;
+  color: white;
+  font-size: 16px;
+}
+
+.qty {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 600;
+}
