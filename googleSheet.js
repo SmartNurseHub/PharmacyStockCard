@@ -16,8 +16,9 @@ async function getMovement(qr) {
   const sheet = doc.sheetsByTitle["INVENTORY_MOVEMENT"];
 
   const rows = await sheet.getRows();
-  const item = rows.find(r => r.QRCODE === qr);
-
+  const item = rows.find(r =>
+  (r.MOVEMENT_ID || r.movement_id) === id
+);
   if (!item) return null;
 
   return {

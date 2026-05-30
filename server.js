@@ -168,9 +168,15 @@ app.get("/api/movement/:id", async (req, res) => {
 
   const rows = result.data.values || [];
 
+  console.log("SCAN =", req.params.id);
+  console.log("FIRST ROW =", rows[1]);
+
   const found = rows.find(r => r[0] === req.params.id);
 
-  if (!found) return res.status(404).json({ error: "not found" });
+  if (!found) {
+    console.log("NOT FOUND");
+    return res.status(404).json({ error: "not found" });
+  }
 
   res.json(mapRow(found));
 });

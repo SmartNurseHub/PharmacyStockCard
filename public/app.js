@@ -64,25 +64,37 @@ function scan(text) {
     })
     .then(d => {
 
-      const found = items.find(i => i.movement_id === d.movement_id);
+  console.log("SCAN DATA =", d);
 
-      if (found) {
-        found.qty++;
-      } else {
-        items.push({
-          session_id,
-          movement_id: d.movement_id,
-          code: d.code,
-          name: d.name,
-          qty: 1,
-          user,
-          lot: d.lot || "-",
-          exp: d.exp || "-"
-        });
-      }
+  const found = items.find(
+    i => i.movement_id === d.movement_id
+  );
 
-      renderList();
-    })
+  console.log("FOUND =", found);
+
+  if (found) {
+    found.qty++;
+  } else {
+
+    items.push({
+      session_id,
+      movement_id: d.movement_id,
+      code: d.code,
+      name: d.name,
+      qty: 1,
+      user,
+      lot: d.lot || "-",
+      exp: d.exp || "-"
+    });
+
+    console.log("ITEM ADDED");
+  }
+
+  console.log("ITEMS =", items);
+
+  renderList();
+
+})
     .catch(err => {
 
       console.error(err);
