@@ -168,13 +168,22 @@ app.get("/api/movement/:id", async (req, res) => {
 
   const rows = result.data.values || [];
 
-  console.log("SCAN =", req.params.id);
-  console.log("FIRST ROW =", rows[1]);
+  const header = rows[0];
+  const dataRows = rows.slice(1);
 
-  const found = rows.find(r => r[0] === req.params.id);
+  const movementIndex = header.indexOf("MOVEMENT_ID");
+
+  if (movementIndex === -1) {
+    return res.status(500).json({
+      error: "MOVEMENT_ID column not found"
+    });
+  }
+
+  const found = dataRows.find(
+    r => r[movementIndex] === req.params.id
+  );
 
   if (!found) {
-    console.log("NOT FOUND");
     return res.status(404).json({ error: "not found" });
   }
 
