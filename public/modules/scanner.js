@@ -12,10 +12,14 @@ export function startScanner(onUpdate) {
 
   qr.start(
     { facingMode: "environment" },
-    { fps: 10, qrbox: 220 },
+    {
+      fps: 10,
+      qrbox: 220
+    },
     async (text) => {
 
       if (lock) return;
+
       lock = true;
       setTimeout(() => lock = false, 500);
 
@@ -28,7 +32,10 @@ export function startScanner(onUpdate) {
 
       const d = res.data;
 
-      const found = state.items.find(i => i.MOVEMENT_ID === d.MOVEMENT_ID);
+      const found =
+        state.items.find(
+          i => i.MOVEMENT_ID === d.MOVEMENT_ID
+        );
 
       if (found) {
         found.qty++;
@@ -40,8 +47,22 @@ export function startScanner(onUpdate) {
       }
 
       beep.play();
-
       onUpdate(state.items);
+
+    },
+    (err) => {
+      console.log("Scan Error:", err);
     }
-  );
+  ).catch(err => {
+
+    console.error("Camera Error:", err);
+
+    Swal.fire({
+      icon: "error",
+      title: "เปิดกล้องไม่ได้",
+      text: err?.message || String(err)
+    });
+
+  });
+
 }
