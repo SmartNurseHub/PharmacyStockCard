@@ -1,6 +1,6 @@
 const params = new URLSearchParams(window.location.search);
 
-let session_id = params.get("sid") || "E2026-001";
+let session_id = "";
 let user = params.get("user") || "Nurse-A";
 
 let items = [];
@@ -12,16 +12,50 @@ const beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.o
 /* =========================
    INIT
 ========================= */
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
+
+  await createSession();
 
   const info = document.getElementById("info");
 
   if (info) {
-    info.innerHTML = `Session: ${session_id}<br>User: ${user}`;
+    info.innerHTML =
+      `Session: ${session_id}<br>User: ${user}`;
   }
 
   startScanner();
+
 });
+
+async function createSession() {
+
+  try {
+
+    const r = await fetch("/api/session/new");
+
+    if (!r.ok) {
+      throw new Error("Create Session Failed");
+    }
+
+    const d = await r.json();
+
+    session_id = d.session_id;
+
+    console.log("SESSION =", session_id);
+
+  } catch (err) {
+
+    console.error(err);
+
+    Swal.fire({
+      icon: "error",
+      title: "Session Error",
+      text: err.message
+    });
+
+  }
+
+}
 
 /* =========================
    START SCANNER
