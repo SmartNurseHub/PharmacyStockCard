@@ -1,37 +1,18 @@
-import { state } from "../core/state.js";
+
 import { startScanner } from "../modules/scanner.js";
-import { closeSession } from "../modules/session.js";
+export function initSessionView() {
 
-window.addEventListener("DOMContentLoaded", () => {
+  console.log("📷 INIT SESSION VIEW");
 
-  const params = new URLSearchParams(location.search);
+  const info = document.getElementById("info");
+  const reader = document.getElementById("reader");
 
-  state.session_id = params.get("sid");
-  state.user = params.get("user");
+  if (!info || !reader) {
+    console.error("DOM not ready: info or reader missing");
+    return;
+  }
 
-  renderInfo();
-  startScanner(renderList);
+  info.innerText = "🔄 กำลังเปิดกล้อง...";
 
-});
-
-function renderInfo() {
-  document.getElementById("info").innerHTML =
-    `Session: ${state.session_id}<br>User: ${state.user}`;
+  startScanner(renderList); // 👈 ส่ง element ไปเลย (ดีที่สุด)
 }
-
-function renderList(items) {
-
-  const el = document.getElementById("list");
-
-  el.innerHTML = items.map(i => `
-    <div class="item">
-      <div>
-        <b>${i.CODE}</b><br/>
-        ${i.NAME}
-      </div>
-      <div>${i.qty}</div>
-    </div>
-  `).join("");
-}
-
-window.closeSession = closeSession;

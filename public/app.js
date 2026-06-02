@@ -32,7 +32,10 @@ function startScanner() {
 
   qr.start(
     { facingMode: "environment" },
-    { fps: 10, qrbox: 220 },
+    { fps: 10, qrbox: (viewWidth, viewHeight) => ({
+  width: viewWidth,
+  height: viewHeight
+})},
     scan
   ).catch(err => {
     console.error(err);

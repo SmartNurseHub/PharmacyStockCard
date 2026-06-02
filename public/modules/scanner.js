@@ -3,10 +3,14 @@ import { state } from "../core/state.js";
 
 let last = "";
 let lock = false;
+let started = false;
 
 const beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 
 export function startScanner(onUpdate) {
+
+  if (started) return;
+  started = true;
 
   const qr = new Html5Qrcode("reader");
 
@@ -14,12 +18,14 @@ export function startScanner(onUpdate) {
     { facingMode: "environment" },
     {
       fps: 10,
-      qrbox: 220
+      qrbox: (viewWidth, viewHeight) => ({
+  width: viewWidth,
+  height: viewHeight
+})
     },
     async (text) => {
 
       if (lock) return;
-
       lock = true;
       setTimeout(() => lock = false, 500);
 
@@ -27,23 +33,18 @@ export function startScanner(onUpdate) {
       last = text;
 
       const res = await getMovement(text);
-
       if (!res?.ok) return;
 
       const d = res.data;
 
-      const found =
-        state.items.find(
-          i => i.MOVEMENT_ID === d.MOVEMENT_ID
-        );
+      const found = state.items.find(
+        i => i.MOVEMENT_ID === d.MOVEMENT_ID
+      );
 
       if (found) {
         found.qty++;
       } else {
-        state.items.push({
-          ...d,
-          qty: 1
-        });
+        state.items.push({ ...d, qty: 1 });
       }
 
       beep.play();
@@ -64,5 +65,4 @@ export function startScanner(onUpdate) {
     });
 
   });
-
 }
