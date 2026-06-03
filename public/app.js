@@ -191,15 +191,6 @@ async function closeSession() {
    RENDER
 ========================= */
 function renderList() {
-  const list = document.getElementById("list");
-
-  const div = document.createElement("div");
-  div.className = "item";
-  div.innerText = item;
-
-  // ✅ เปลี่ยนจาก appendChild → prepend
-  list.prepend(div);
-
   const el = document.getElementById("list");
 
   if (!el) return;
@@ -237,6 +228,22 @@ function renderList() {
 
     </div>
   `).join("");
+}
+
+const list = document.getElementById("list");
+
+// 📌 เพิ่มรายการใหม่ให้อยู่บนสุด
+function renderList(item) {
+  if (!list) {
+    console.error("list not found");
+    return;
+  }
+
+  const div = document.createElement("div");
+  div.className = "item";
+  div.innerText = item;
+
+  list.prepend(div); // 🔥 ตัวสำคัญ: ขึ้นบนสุด
 }
 
 /* =========================

@@ -36,17 +36,11 @@ export function initSessionView() {
     }
   }
 
-let lastScan = 0;
-
-function onScan(result) {
-  const now = Date.now();
-  if (now - lastScan < 1000) return; // กันสแกนซ้ำใน 1 วิ
-
-  lastScan = now;
-
-  playBeep();
-  renderList(result);
-}
+  // 📷 wrap callback เพื่อใส่เสียง
+  function onScan(result) {
+    playBeep();        // 🔊 เล่นเสียงตอนสแกนสำเร็จ
+    renderList(result); // 👈 ของเดิมคุณ
+  }
 
   startScanner(onScan);
 }
