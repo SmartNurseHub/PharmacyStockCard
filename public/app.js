@@ -191,6 +191,14 @@ async function closeSession() {
    RENDER
 ========================= */
 function renderList() {
+  const list = document.getElementById("list");
+
+  const div = document.createElement("div");
+  div.className = "item";
+  div.innerText = item;
+
+  // ✅ เปลี่ยนจาก appendChild → prepend
+  list.prepend(div);
 
   const el = document.getElementById("list");
 
