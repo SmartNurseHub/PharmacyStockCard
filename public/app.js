@@ -19,23 +19,22 @@ window.addEventListener("DOMContentLoaded", async () => {
   const info = document.getElementById("info");
 
   if (info) {
-    info.innerHTML =
-      `Session: ${session_id}<br>User: ${user}`;
+    info.innerHTML = `Session: ${session_id}<br>User: ${user}`;
   }
 
   startScanner();
-
 });
 
-async function createSession() {
 
+/* =========================
+   CREATE SESSION
+========================= */
+async function createSession() {
   try {
 
     const r = await fetch("/api/session/new");
 
-    if (!r.ok) {
-      throw new Error("Create Session Failed");
-    }
+    if (!r.ok) throw new Error("Create Session Failed");
 
     const d = await r.json();
 
@@ -54,8 +53,8 @@ async function createSession() {
     });
 
   }
-
 }
+
 
 /* =========================
    START SCANNER
@@ -66,16 +65,20 @@ function startScanner() {
 
   qr.start(
     { facingMode: "environment" },
-    { fps: 10, qrbox: (viewWidth, viewHeight) => ({
-  width: viewWidth,
-  height: viewHeight
-})},
+    {
+      fps: 10,
+      qrbox: (viewWidth, viewHeight) => ({
+        width: viewWidth,
+        height: viewHeight
+      })
+    },
     scan
   ).catch(err => {
     console.error(err);
     alert("Camera error: " + err);
   });
 }
+
 
 /* =========================
    SCAN
@@ -94,50 +97,105 @@ function scan(text) {
 
   fetch(`/api/movement/${text}`)
     .then(async r => {
-
       if (!r.ok) throw new Error("NOT FOUND");
-
       return r.json();
     })
     .then(d => {
 
-  console.log("SCAN DATA =", d);
+      console.log("SCAN DATA =", d);
 
-  const found = items.find(
-    i => i.movement_id === d.movement_id
-  );
+      const found = items.find(
+        i => i.movement_id === d.movement_id
+      );
 
-  console.log("FOUND =", found);
+      if (found) {
+        found.qty++;
+      } else {
+        items.push({
+          session_id,
+          movement_id: d.movement_id || "-",
+          code: d.code || "-",
+          name: d.name || "-",
+          qty: 1,
+          user,
+          lot: d.lot || "-",
+          exp: d.exp || "-"
+        });
 
-  if (found) {
-    found.qty++;
-  } else {
+        console.log("ITEM ADDED");
+      }
 
-    items.push({
-      session_id,
-      movement_id: d.movement_id,
-      code: d.code,
-      name: d.name,
-      qty: 1,
-      user,
-      lot: d.lot || "-",
-      exp: d.exp || "-"
-    });
+      console.log("ITEMS =", items);
 
-    console.log("ITEM ADDED");
-  }
+      renderList();
 
-  console.log("ITEMS =", items);
-
-  renderList();
-
-})
+    })
     .catch(err => {
-
       console.error(err);
-
     });
 }
+
+
+/* =========================
+   RENDER LIST
+========================= */
+function renderList() {
+
+  const el = document.getElementById("list");
+
+  if (!el) return;
+
+  if (!items.length) {
+    el.innerHTML = `
+      <div style="text-align:center;color:#94a3b8;padding:20px">
+        ยังไม่มีรายการ
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = items.map((i, index) => `
+    <div class="item">
+
+      <div>
+        <div style="color:#22c55e;font-weight:600">${i.code}</div>
+        <div style="font-size:12px;color:#cbd5e1">${i.name}</div>
+        <div style="font-size:12px;color:#64748b">${i.lot} | ${i.exp}</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px">
+
+        <button onclick="minus(${index})"
+          style="width:30px;height:30px;border-radius:8px;border:none;background:#334155;color:white">-</button>
+
+        <div style="min-width:25px;text-align:center;font-weight:600">
+          ${i.qty}
+        </div>
+
+        <button onclick="plus(${index})"
+          style="width:30px;height:30px;border-radius:8px;background:#22c55e;border:none">+</button>
+
+      </div>
+
+    </div>
+  `).join("");
+}
+
+
+/* =========================
+   QTY CONTROL
+========================= */
+function plus(i) {
+  items[i].qty++;
+  renderList();
+}
+
+function minus(i) {
+  if (items[i].qty > 0) {
+    items[i].qty--;
+    renderList();
+  }
+}
+
 
 /* =========================
    CLOSE SESSION
@@ -184,79 +242,5 @@ async function closeSession() {
       title: 'Save Failed',
       text: err.message
     });
-  }
-}
-
-/* =========================
-   RENDER
-========================= */
-function renderList() {
-  const el = document.getElementById("list");
-
-  if (!el) return;
-
-  if (!items.length) {
-    el.innerHTML = `
-      <div style="text-align:center;color:#94a3b8;padding:20px">
-        ยังไม่มีรายการ
-      </div>`;
-    return;
-  }
-
-  el.innerHTML = items.map((i, index) => `
-    <div class="item">
-
-      <div>
-        <div style="color:#22c55e;font-weight:600">${i.code}</div>
-        <div style="font-size:12px;color:#cbd5e1">${i.name}</div>
-        <div style="font-size:12px;color:#64748b">${i.lot} | ${i.exp}</div>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:8px">
-
-        <button onclick="minus(${index})"
-          style="width:30px;height:30px;border-radius:8px;border:none;background:#334155;color:white">-</button>
-
-        <div style="min-width:25px;text-align:center;font-weight:600">
-          ${i.qty}
-        </div>
-
-        <button onclick="plus(${index})"
-          style="width:30px;height:30px;border-radius:8px;background:#22c55e;border:none">+</button>
-
-      </div>
-
-    </div>
-  `).join("");
-}
-
-const list = document.getElementById("list");
-
-// 📌 เพิ่มรายการใหม่ให้อยู่บนสุด
-function renderList(item) {
-  if (!list) {
-    console.error("list not found");
-    return;
-  }
-
-  const div = document.createElement("div");
-  div.className = "item";
-  div.innerText = item;
-
-  list.prepend(div); // 🔥 ตัวสำคัญ: ขึ้นบนสุด
-}
-
-/* =========================
-   QTY
-========================= */
-function plus(i){
-  items[i].qty++;
-  renderList();
-}
-
-function minus(i){
-  if(items[i].qty > 0){
-    items[i].qty--;
-    renderList();
   }
 }
